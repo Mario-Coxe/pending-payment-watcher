@@ -1,13 +1,16 @@
-import knex from 'knex';
+import knex from "knex";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const db = knex({
-  client: 'mysql', 
+  client: process.env.CLIENT_MYSQL,
   connection: {
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'Mcox@23.1',
-    database: 'ikueno',
-  },
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+  }
 });
 
 export default db;
