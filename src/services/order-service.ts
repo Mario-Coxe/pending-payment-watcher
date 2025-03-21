@@ -8,10 +8,16 @@ import {
 
 export const orderService = {
   async getPendingOrders(): Promise<Order[]> {
+    const timeCheck = Number(process.env.TIME_CHECK) || 30;
+
     return knex("orders")
       .where("status", PAYMENT_STATUS_ENUM.PENDING)
       .andWhere("payment_method", PAYMENT_METHOD_ENUM.BANK_TRANSFER)
-      .andWhere("created_at", "<=", knex.raw("NOW() - INTERVAL 1 MINUTE"))
+      .andWhere(
+        "created_at",
+        "<=",
+        knex.raw(`NOW() - INTERVAL ? MINUTE`, [timeCheck])
+      )
       .select("*");
   },
 

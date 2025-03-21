@@ -1,9 +1,14 @@
-import { orderService } from "../services/order-service";
+import dotenv from "dotenv";
+import { orderService } from "services/order-service";
+
+dotenv.config();
+
+const TIME_CHECK = Number(process.env.TIME_CHECK) || 30; 
 
 export const scheduler = {
   start(): void {
     setInterval(async () => {
       await orderService.checkAndCancelUnpaidOrders();
-    }, 1 * 60 * 1000); // 2 minutos
+    }, TIME_CHECK * 60 * 1000); 
   },
 };
