@@ -4,6 +4,7 @@
   "description": "Serviço que monitora pagamentos pendentes",
   "main": "index.js",
   "scripts": {
+    "dev": "ts-node-dev --respawn --transpileOnly src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
