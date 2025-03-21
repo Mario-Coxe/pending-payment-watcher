@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "strictPropertyInitialization": false,
+    "target": "ES6",
+    "module": "commonjs",
+    "lib": ["es2017"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "resolveJsonModule": true,
+    "noImplicitAny": true, 
+    "skipDefaultLibCheck": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
