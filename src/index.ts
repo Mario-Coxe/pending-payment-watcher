@@ -17,5 +17,5 @@ scheduler.start();
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`🔄 Servidor e scheduler rodando na porta ${PORT}`);
-  console.log(`⏱️ Verificando pedidos a cada ${process.env.TIME_CHECK || 1} minuto(s)`);
+  console.log(`⏱️ Verificando pedidos a cada ${process.env.TIME_CHECK || 30} minuto(s)`);
 });

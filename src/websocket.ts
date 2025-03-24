@@ -7,7 +7,7 @@ export function initializeWebSocket(server: http.Server): Server {
   io = new Server(server, {
     cors: {
       origin: "*",
-      methods: ["GET", "POST"]
+      methods: ["GET"]
     }
   });
 
@@ -29,5 +29,4 @@ export function notifyOrderCancellation(orderId: number): void {
     orderId,
     timestamp: new Date().toISOString()
   });
-  console.log(`Notificação enviada para pedido ${orderId}`);
 }
