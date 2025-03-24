@@ -5,6 +5,7 @@ import {
   PAYMENT_STATUS_ENUM,
   ORDER_STATUS_ENUM
 } from "../interfaces/order";
+import { notifyOrderCancellation } from "../websocket";
 
 export const orderService = {
   async getPendingOrders(): Promise<Order[]> {
@@ -25,6 +26,7 @@ export const orderService = {
     await knex("orders")
       .where("id", orderId)
       .update({ status: ORDER_STATUS_ENUM.CANCELED });
+    notifyOrderCancellation(orderId);
   },
 
   async checkAndCancelUnpaidOrders(): Promise<void> {
