@@ -9,7 +9,7 @@ import { notifyOrderCancellation } from "../websocket";
 
 export const orderService = {
   async getPendingOrders(): Promise<Order[]> {
-    const timeCheck = Number(process.env.TIME_CHECK) || 30;
+    const paymentTimeLimit = Number(process.env.PAYMENT_TIME_LIMIT) || 30;
 
     return knex("orders")
       .where("status", PAYMENT_STATUS_ENUM.PENDING)
@@ -17,7 +17,7 @@ export const orderService = {
       .andWhere(
         "created_at",
         "<=",
-        knex.raw(`NOW() - INTERVAL ? MINUTE`, [timeCheck])
+        knex.raw(`NOW() - INTERVAL ? MINUTE`, [paymentTimeLimit])
       )
       .select("*");
   },
@@ -31,7 +31,6 @@ export const orderService = {
 
   async checkAndCancelUnpaidOrders(): Promise<void> {
     const pendingOrders = await this.getPendingOrders();
-
     for (const order of pendingOrders) {
       await this.cancelOrder(order.id);
       console.log(`Order ${order.id} cancelled due to unpaid status.`);
