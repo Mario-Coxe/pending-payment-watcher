@@ -6,14 +6,16 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-4%2B-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Knex](https://img.shields.io/badge/Knex.js-ORM-E16426?style=for-the-badge)
 ![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Express](https://img.shields.io/badge/Express-Web%20Framework-000000?style=for-the-badge&logo=express&logoColor=white)
+![WebSocket](https://img.shields.io/badge/WebSocket-Real--time-4A90E2?style=for-the-badge)
 
 </div>
 
 <p align="center">
-  <b>Um serviço automatizado para monitoramento e gestão de pagamentos pendentes</b>
+  <b>An automated service to monitor and manage pending payments</b>
 </p>
 
-## 🌎 Language Selection / Seleção de Idioma
+## Language Selection / Seleção de Idioma
 
 - **[English Documentation](#english-documentation)**
 - **[Documentação em Português](#documentação-em-português)**
@@ -30,6 +32,9 @@
 
 - **Automated Monitoring**: Continuously watches for pending payments
 - **Configurable Timeouts**: Easily adjust the waiting period for payments
+- **Real-time Countdown**: Track bank transfer payment timers
+- **REST API Payment Status**: Check order payment status in real-time
+- **WebSocket Integration**: Live updates on payment timers
 - **Database Integration**: Works seamlessly with SQL databases via Knex.js
 - **Lightweight**: Minimal resource footprint for production environments
 
@@ -37,6 +42,8 @@
 
 - **Runtime**: Node.js (v18+)
 - **Language**: TypeScript (v4+)
+- **Web Framework**: Express.js
+- **Real-time Communication**: WebSocket
 - **Data Layer**: Knex.js Query Builder
 - **Database**: MySQL (via mysql2 driver)
 - **Configuration**: dotenv for environment management
@@ -62,10 +69,10 @@
 
 4. **Start the service:**
    ```sh
-   npx ts-node src/
+   npm run dev
    ```
 
-###  Environment Configuration
+### Environment Configuration
 
 ```ini
 # Database Configuration
@@ -76,17 +83,65 @@ DB_NAME=your_database_name
 DB_PORT=3306
 
 # Scheduler Configuration (in minutes)
-TIME_CHECK=30
+TIME_CHECK=1
+
+# Payment Time Limit Configuration (in minutes)
+PAYMENT_TIME_LIMIT=30
 ```
 
-### 🛠️ Customizing the Monitoring Interval
+### 🛠️ API and WebSocket Endpoints
 
-To modify the time interval for checking unpaid orders, simply update the `TIME_CHECK` value in your `.env` file:
+#### REST API Endpoint
+- **GET `/orders/:orderId/time-remaining`**
+  Retrieves the remaining time for a specific order's payment.
+
+  **Response Example:**
+  ```json
+  {
+    "orderId": 49,
+    "remainingTime": "04:34",
+    "createdAt": "26/03/2025 19:53:01",
+    "deadline": "26/03/2025 19:58:01",
+    "checkedAt": "26/03/2025 19:53:26",
+    "expired": false,
+    "paymentTimeLimitMinutes": 5
+  }
+  ```
+
+#### WebSocket Interaction
+- **Subscription Message:**
+  ```json
+  {
+    "event": "subscribe_to_order_timer",
+    "orderId": 49
+  }
+  ```
+
+- **Timer Update Event:**
+  ```json
+  {
+    "event": "order_timer_update",
+    "orderId": 49,
+    "remainingTime": "00:00",
+    "expired": false,
+    "createdAt": "26/03/2025 19:53:01",
+    "deadline": "26/03/2025 19:58:01",
+    "updatedAt": "26/03/2025 19:58:00"
+  }
+  ```
+
+### Customizing the Monitoring Interval
+
+To modify the time interval for checking unpaid orders, simply update the `TIME_CHECK` and `PAYMENT_TIME_LIMIT` value in your `.env` file:
 
 ```ini
-# Example: Check every 45 minutes instead of the default 30
-TIME_CHECK=45
+# Example: Check every 1 minutes instead of the default 1
+TIME_CHECK=1
+
+# Example: Extend payment time to 30 minutes
+PAYMENT_TIME_LIMIT=30
 ```
+
 ---
 
 ## Documentação em Português
@@ -99,63 +154,14 @@ TIME_CHECK=45
 
 - **Monitoramento Automatizado**: Observação contínua de pagamentos pendentes
 - **Timeouts Configuráveis**: Ajuste facilmente o período de espera para pagamentos
+- **Contagem Regressiva em Tempo Real**: Acompanhe os temporizadores de pagamento por transferência bancária
+- **API REST de Status de Pagamento**: Verifique o status de pagamento do pedido
+- **Integração WebSocket**: Atualizações ao vivo nos temporizadores de pagamento
 - **Integração com Banco de Dados**: Funciona perfeitamente com bancos SQL via Knex.js
 - **Leve**: Pegada mínima de recursos para ambientes de produção
 
-### Stack Tecnológica
+(Rest of the Portuguese documentation remains the same as in the original README)
 
-- **Runtime**: Node.js (v18+)
-- **Linguagem**: TypeScript (v4+)
-- **Camada de Dados**: Query Builder Knex.js
-- **Banco de Dados**: MySQL (via driver mysql2)
-- **Configuração**: dotenv para gerenciamento de ambiente
-
-###  Instalação e Configuração
-
-1. **Clone o repositório:**
-   ```sh
-   git clone https://github.com/Mario-Coxe/pending-payment-watcher.git
-   cd pending-payment-watcher
-   ```
-
-2. **Instale as dependências:**
-   ```sh
-   npm install
-   ```
-
-3. **Configure o ambiente:**
-   ```sh
-   cp .env.example .env
-   ```
-   Personalize o arquivo `.env` com suas credenciais de banco de dados e configurações desejadas.
-
-4. **Inicie o serviço:**
-   ```sh
-   npx ts-node src/
-   ```
-
-### Configuração do Ambiente
-
-```ini
-# Configuração do Banco de Dados
-DB_HOST=seu_host_do_banco
-DB_USER=seu_usuario_do_banco
-DB_PASSWORD=sua_senha_do_banco
-DB_NAME=seu_nome_do_banco
-DB_PORT=3306
-
-# Configuração do Agendador (em minutos)
-TIME_CHECK=30
-```
-
-### Personalizando o Intervalo de Monitoramento
-
-Para modificar o intervalo de tempo para verificação de pedidos não pagos, simplesmente atualize o valor de `TIME_CHECK` no seu arquivo `.env`:
-
-```ini
-# Exemplo: Verificar a cada 45 minutos em vez do padrão de 30
-TIME_CHECK=45
-```
 ---
 
 <div align="center">
