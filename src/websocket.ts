@@ -2,7 +2,7 @@ import { Server, Socket } from "socket.io";
 import * as http from "http";
 import knex from "../knexfile";
 import { formatDateTime, formatRemainingTime } from "./helps/format-date-time";
-
+import { orderService } from "./services/order-service";
 let io: Server;
 
 export function initializeWebSocket(server: http.Server): Server {
@@ -52,8 +52,9 @@ function startOrderTimer(order: any, socket: Socket) {
   const createdAt = new Date(order.created_at);
   const deadline = new Date(createdAt.getTime() + paymentTimeLimit * 60000);
 
+  let interval: NodeJS.Timeout;
 
-  const updateTimer = () => {
+  const updateTimer = async () => {
     const now = new Date();
     const remainingTime = deadline.getTime() - now.getTime();
     const expired = remainingTime <= 0;
@@ -72,13 +73,20 @@ function startOrderTimer(order: any, socket: Socket) {
 
     if (expired) {
       clearInterval(interval);
-      console.log(`Timer para order ${order.id} expirado`);
+      try {
+        await orderService.checkAndCancelUnpaidOrders();
+      } catch (error) {
+        console.error(
+          `Error checking unpaid orders for order ${order.id}:`,
+          error
+        );
+      }
     }
   };
 
   updateTimer();
 
-  const interval = setInterval(updateTimer, 1000);
+  interval = setInterval(updateTimer, 1000);
 
   socket.on("disconnect", () => {
     clearInterval(interval);
