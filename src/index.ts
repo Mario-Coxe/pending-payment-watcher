@@ -61,6 +61,6 @@ server.listen(PORT, () => {
     `⏱️ payment term: ${process.env.PAYMENT_TIME_LIMIT || 30} minutos`
   );
   console.log(
-    `⏳ Checking orders every: ${process.env.TIME_CHECK || 30} minuto(s)`
+    `⏳ Checking orders every: ${process.env.TIME_CHECK || 1} minuto(s)`
   );
 });

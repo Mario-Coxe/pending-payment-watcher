@@ -3,7 +3,7 @@ import { orderService } from "../services/order-service";
 
 dotenv.config();
 
-const TIME_CHECK = Number(process.env.TIME_CHECK) || 30;
+const TIME_CHECK = Number(process.env.TIME_CHECK) || 1;
 
 export const scheduler = {
   start(): void {
